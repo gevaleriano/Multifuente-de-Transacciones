@@ -1,39 +1,77 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-sm">
-        <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Total Procesadas</p>
-        <p class="text-3xl font-extrabold text-white mt-1">{{ metrics.total_processed }}</p>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.tailwindcss.css">
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.tailwindcss.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+
+<!-- Info Card / Guidance on Formats -->
+<div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 sm:p-5 shadow-sm space-y-3">
+    <div class="flex flex-wrap items-center justify-between gap-2 cursor-pointer" onclick="document.getElementById('formatsInfo').classList.toggle('hidden')">
+        <h2 class="text-sm font-bold text-sky-600 dark:text-sky-400 flex items-center gap-2">
+            <span>ℹ️</span> Especificación de Fuentes y Normalización de Datos
+        </h2>
+        <span class="text-xs text-slate-500 dark:text-slate-400 underline">Ver / Ocultar Guía de Formatos</span>
     </div>
-    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-sm">
-        <p class="text-xs uppercase tracking-wider text-emerald-400 font-semibold">Válidas vs Inválidas</p>
-        <p class="text-3xl font-extrabold text-white mt-1">
-            <span class="text-emerald-400">{{ metrics.valid_count }}</span> / <span class="text-rose-400">{{ metrics.invalid_count }}</span>
-        </p>
-    </div>
-    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-sm">
-        <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Conteo por Estado</p>
-        <div class="flex gap-2 text-xs mt-2 font-bold">
-            <span class="bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-1 rounded">OK: {{ metrics.status_counts.SUCCESS }}</span>
-            <span class="bg-rose-950 text-rose-300 border border-rose-800 px-2 py-1 rounded">FAIL: {{ metrics.status_counts.FAILED }}</span>
-            <span class="bg-amber-950 text-amber-300 border border-amber-800 px-2 py-1 rounded">PEND: {{ metrics.status_counts.PENDING }}</span>
+    <div id="formatsInfo" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs text-slate-700 dark:text-slate-300 pt-3 border-t border-slate-200 dark:border-slate-700">
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+            <p class="font-bold text-sky-600 dark:text-sky-300 mb-1">Fuente Alpha (Estándar)</p>
+            <p class="text-slate-600 dark:text-slate-400 font-mono text-[11px] break-all">{"id": "tx_001", "amount": "100.50", "currency": "USD", "timestamp": "YYYY-MM-DD HH:MM:SS", "status": "completed"}</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+            <p class="font-bold text-sky-600 dark:text-sky-300 mb-1">Fuente Beta (Centavos)</p>
+            <p class="text-slate-600 dark:text-slate-400 font-mono text-[11px] break-all">{"transaction_id": 204, "total": 10050, "currency_code": "usd", "created_at": "DD/MM/YYYY HH:MM", "state": "OK"}</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+            <p class="font-bold text-sky-600 dark:text-sky-300 mb-1">Fuente Gamma (Símbolos)</p>
+            <p class="text-slate-600 dark:text-slate-400 font-mono text-[11px] break-all">{"ref": "A-77", "amount": "€99,99", "date": "ISO-8601", "result": "success"}</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+            <p class="font-bold text-emerald-600 dark:text-emerald-400 mb-1">Esquema Unificado Objetivo</p>
+            <p class="text-slate-700 dark:text-slate-300 font-mono text-[11px] break-all">{"id": "string", "amount": 99.99, "currency": "USD", "timestamp": "ISO-8601", "status": "SUCCESS|FAILED|PENDING"}</p>
         </div>
     </div>
-    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-sm">
-        <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Totales por Moneda</p>
-        <div class="text-sm font-bold text-sky-300 mt-1">
+</div>
+
+<!-- Metrics Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">Total Procesadas</p>
+        <p class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{{ metrics.total_processed }}</p>
+    </div>
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <p class="text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-semibold">Válidas vs Inválidas</p>
+        <p class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+            <span class="text-emerald-600 dark:text-emerald-400">{{ metrics.valid_count }}</span> / <span class="text-rose-600 dark:text-rose-400">{{ metrics.invalid_count }}</span>
+        </p>
+    </div>
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">Conteo por Estado</p>
+        <div class="flex flex-wrap gap-1.5 text-xs mt-2 font-bold">
+            <span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2 py-1 rounded">OK: {{ metrics.status_counts.SUCCESS }}</span>
+            <span class="bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 px-2 py-1 rounded">FAIL: {{ metrics.status_counts.FAILED }}</span>
+            <span class="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2 py-1 rounded">PEND: {{ metrics.status_counts.PENDING }}</span>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">Totales por Moneda</p>
+        <div class="text-sm font-bold text-sky-600 dark:text-sky-300 mt-1">
             {% for curr, total in metrics.totals_by_currency.items() %}
-                <span>{{ curr }}: ${{ "%.2f"|format(total) }}</span>{% if not loop.last %} | {% endif %}
+                <span class="inline-block">{{ curr }}: ${{ "%.2f"|format(total) }}</span>{% if not loop.last %} <span class="text-slate-300 dark:text-slate-600">|</span> {% endif %}
             {% endfor %}
         </div>
     </div>
 </div>
 
-<form method="GET" action="/" class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-wrap gap-4 items-end">
+<!-- Responsive Filters Form -->
+<form method="GET" action="/" class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end shadow-sm">
     <div>
-        <label class="block text-xs font-medium text-slate-400 mb-1">Estado</label>
-        <select name="status" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2">
+        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Estado</label>
+        <select name="status" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs rounded-lg px-3 py-2">
             <option value="">Todos los Estados</option>
             <option value="SUCCESS" {% if selected_status == 'SUCCESS' %}selected{% endif %}>SUCCESS</option>
             <option value="FAILED" {% if selected_status == 'FAILED' %}selected{% endif %}>FAILED</option>
@@ -41,8 +79,8 @@
         </select>
     </div>
     <div>
-        <label class="block text-xs font-medium text-slate-400 mb-1">Moneda</label>
-        <select name="currency" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2">
+        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Moneda</label>
+        <select name="currency" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs rounded-lg px-3 py-2">
             <option value="">Todas las Monedas</option>
             {% for c in currencies %}
             <option value="{{ c }}" {% if selected_currency == c %}selected{% endif %}>{{ c }}</option>
@@ -50,8 +88,8 @@
         </select>
     </div>
     <div>
-        <label class="block text-xs font-medium text-slate-400 mb-1">Fuente</label>
-        <select name="source" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2">
+        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Fuente</label>
+        <select name="source" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs rounded-lg px-3 py-2">
             <option value="">Todas las Fuentes</option>
             {% for s in sources %}
             <option value="{{ s }}" {% if selected_source == s %}selected{% endif %}>{{ s }}</option>
@@ -59,65 +97,231 @@
         </select>
     </div>
     <div>
-        <label class="block text-xs font-medium text-slate-400 mb-1">Validez</label>
-        <select name="validity" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2">
+        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Validez</label>
+        <select name="validity" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs rounded-lg px-3 py-2">
             <option value="">Todos</option>
             <option value="valid" {% if selected_validity == 'valid' %}selected{% endif %}>Válidas</option>
             <option value="invalid" {% if selected_validity == 'invalid' %}selected{% endif %}>Inválidas</option>
         </select>
     </div>
     <div class="flex gap-2">
-        <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Filtrar</button>
-        <a href="/" class="bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs font-bold px-4 py-2 rounded-lg transition">Limpiar</a>
+        <button type="submit" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Filtrar</button>
+        <a href="/" class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold px-4 py-2 rounded-lg transition text-center">Limpiar</a>
     </div>
 </form>
 
-<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-slate-900/50 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-700">
+<!-- Transactions DataTable Container (Responsive wrapper, No Zebra Striping) -->
+<div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm">
+    <div class="w-full overflow-x-auto">
+        <table id="transactionsTable" class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+            <thead class="bg-slate-100 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-slate-700">
                 <tr>
-                    <th class="p-3">ID Normalizado</th>
-                    <th class="p-3">Monto</th>
-                    <th class="p-3">Moneda</th>
-                    <th class="p-3">Fecha (ISO-8601)</th>
-                    <th class="p-3">Estado</th>
-                    <th class="p-3">Fuente</th>
-                    <th class="p-3">Validez</th>
+                    <th class="p-3 whitespace-nowrap">ID Normalizado</th>
+                    <th class="p-3 whitespace-nowrap">Monto</th>
+                    <th class="p-3 whitespace-nowrap">Moneda</th>
+                    <th class="p-3 whitespace-nowrap">Fecha (ISO-8601)</th>
+                    <th class="p-3 whitespace-nowrap">Estado</th>
+                    <th class="p-3 whitespace-nowrap">Fuente</th>
+                    <th class="p-3 whitespace-nowrap">Validez</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-700/50">
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-700/60 bg-white dark:bg-slate-800">
                 {% for tx in transactions %}
-                <tr class="hover:bg-slate-700/30 transition">
-                    <td class="p-3 font-mono font-medium text-sky-300">{{ tx.id }}</td>
-                    <td class="p-3 font-mono">${{ "%.2f"|format(tx.amount) }}</td>
-                    <td class="p-3 font-semibold">{{ tx.currency }}</td>
-                    <td class="p-3 font-mono text-slate-400">{{ tx.timestamp }}</td>
-                    <td class="p-3">
+                <tr class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition">
+                    <td class="p-3 font-mono font-medium text-sky-600 dark:text-sky-400 whitespace-nowrap">{{ tx.id }}</td>
+                    <td class="p-3 font-mono whitespace-nowrap">${{ "%.2f"|format(tx.amount) }}</td>
+                    <td class="p-3 font-semibold whitespace-nowrap">{{ tx.currency }}</td>
+                    <td class="p-3 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ tx.timestamp }}</td>
+                    <td class="p-3 whitespace-nowrap">
                         {% if tx.status == 'SUCCESS' %}
-                        <span class="bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded font-bold">SUCCESS</span>
+                        <span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded font-bold">SUCCESS</span>
                         {% elif tx.status == 'FAILED' %}
-                        <span class="bg-rose-950 text-rose-300 border border-rose-800 px-2 py-0.5 rounded font-bold">FAILED</span>
+                        <span class="bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 px-2 py-0.5 rounded font-bold">FAILED</span>
                         {% else %}
-                        <span class="bg-amber-950 text-amber-300 border border-amber-800 px-2 py-0.5 rounded font-bold">PENDING</span>
+                        <span class="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded font-bold">PENDING</span>
                         {% endif %}
                     </td>
-                    <td class="p-3 text-slate-400">{{ tx.source }}</td>
-                    <td class="p-3">
+                    <td class="p-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ tx.source }}</td>
+                    <td class="p-3 whitespace-nowrap">
                         {% if tx.is_valid %}
-                        <span class="text-emerald-400 font-bold">✓ Válida</span>
+                        <span class="text-emerald-600 dark:text-emerald-400 font-bold">✓ Válida</span>
                         {% else %}
-                        <span class="text-rose-400 font-bold" title="{{ tx.error_reason }}">✕ Inválida</span>
+                        <span class="text-rose-600 dark:text-rose-400 font-bold" title="{{ tx.error_reason }}">✕ Inválida</span>
                         {% endif %}
                     </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="7" class="p-6 text-center text-slate-500">No se encontraron transacciones que coincidan con los filtros.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<style>
+table.dataTable tbody tr,
+table.dataTable.stripe tbody tr.odd,
+table.dataTable.stripe tbody tr.even,
+table.dataTable.display tbody tr.odd,
+table.dataTable.display tbody tr.even {
+    background-color: transparent !important;
+}
+
+.dt-layout-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.dt-layout-row:last-child {
+    margin-bottom: 0;
+    margin-top: 1rem;
+}
+
+.dt-search input {
+    background-color: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+    outline: none;
+}
+
+.dark .dt-search input {
+    border-color: #334155;
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
+.dt-length select {
+    background-color: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    margin: 0 0.35rem;
+}
+
+.dark .dt-length select {
+    border-color: #334155;
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
+.dt-length {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 1rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.dark .dt-length {
+    color: #94a3b8;
+}
+
+/* Segmented Icon Pagination matching reference */
+.dt-paging nav {
+    display: inline-flex;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.dark .dt-paging nav {
+    border-color: #334155;
+    background-color: #1e293b;
+}
+
+.dt-paging-button {
+    padding: 0.45rem 0.8rem !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    color: #334155 !important;
+    border-right: 1px solid #e2e8f0 !important;
+    background: transparent !important;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.dark .dt-paging-button {
+    color: #cbd5e1 !important;
+    border-right-color: #334155 !important;
+}
+
+.dt-paging-button:last-child {
+    border-right: none !important;
+}
+
+.dt-paging-button:hover:not(.disabled) {
+    background-color: #f1f5f9 !important;
+}
+
+.dark .dt-paging-button:hover:not(.disabled) {
+    background-color: #334155 !important;
+}
+
+.dt-paging-button.current {
+    background-color: #f1f5f9 !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+}
+
+.dark .dt-paging-button.current {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+}
+
+.dt-paging-button.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    $('#transactionsTable').DataTable({
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+        stripeClasses: [],
+        pagingType: 'simple_numbers',
+        layout: {
+            topStart: 'search',
+            topEnd: {
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        text: 'Exportar CSV',
+                        className: 'bg-sky-600 hover:bg-sky-500 text-white font-bold py-1.5 px-3 rounded-lg text-xs shadow-sm transition'
+                    },
+                    {
+                        extend: 'copyHtml5',
+                        text: 'Copiar',
+                        className: 'bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-1.5 px-3 rounded-lg text-xs shadow-sm transition ml-2'
+                    }
+                ]
+            },
+            bottomStart: ['info', 'pageLength'],
+            bottomEnd: 'paging'
+        },
+        language: {
+            search: "Buscar:",
+            lengthMenu: "_MENU_ por página",
+            zeroRecords: "No se encontraron resultados",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            infoEmpty: "Mostrando 0 a 0 de 0 registros",
+            infoFiltered: "(filtrado de _MAX_ registros totales)",
+            paginate: {
+                first: "«",
+                previous: "‹",
+                next: "›",
+                last: "»"
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

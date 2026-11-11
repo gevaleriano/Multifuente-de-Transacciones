@@ -598,12 +598,5 @@
     "amount": "€39,75",
     "date": "2025-03-10T15:00:00Z",
     "result": "success"
-  },
-  {
-    "id": "gv_001",
-    "amount": "1000.12",
-    "currency": "USD",
-    "timestamp": "2025-03-10 08:15:00",
-    "status": "pending"
   }
 ]
