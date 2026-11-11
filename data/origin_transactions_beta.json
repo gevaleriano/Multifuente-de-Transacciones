@@ -1,0 +1,212 @@
+[
+  {
+    "transaction_id": 201,
+    "total": 44454,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 09:12",
+    "state": "error"
+  },
+  {
+    "transaction_id": 202,
+    "total": 43629,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 09:24",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 203,
+    "total": 18859,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 09:36",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 204,
+    "total": 38289,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 09:48",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 205,
+    "total": 39811,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 10:00",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 206,
+    "total": 27675,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 10:12",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 207,
+    "total": 10565,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 10:24",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 208,
+    "total": 4587,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 10:36",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 209,
+    "total": 42620,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 10:48",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 210,
+    "total": 29166,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 11:00",
+    "state": "error"
+  },
+  {
+    "transaction_id": 211,
+    "total": 26509,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 11:12",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 212,
+    "total": 17976,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 11:24",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 213,
+    "total": 9007,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 11:36",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 214,
+    "total": 23793,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 11:48",
+    "state": "error"
+  },
+  {
+    "transaction_id": 215,
+    "total": 29992,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 12:00",
+    "state": "error"
+  },
+  {
+    "transaction_id": 216,
+    "total": 1712,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 12:12",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 217,
+    "total": 13208,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 12:24",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 218,
+    "total": "corrupt_total",
+    "currency_code": "usd",
+    "created_at": "10/03/2025 12:36",
+    "state": "error"
+  },
+  {
+    "transaction_id": 219,
+    "total": 21058,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 12:48",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 220,
+    "total": 26004,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 13:00",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 221,
+    "total": 36257,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 13:12",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 222,
+    "total": 22743,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 13:24",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 223,
+    "total": 8831,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 13:36",
+    "state": "error"
+  },
+  {
+    "transaction_id": 224,
+    "total": 17192,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 13:48",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 225,
+    "total": 38682,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 14:00",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 226,
+    "total": 33349,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 14:12",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 227,
+    "total": 9741,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 14:24",
+    "state": "pending"
+  },
+  {
+    "transaction_id": 228,
+    "total": 32648,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 14:36",
+    "state": "error"
+  },
+  {
+    "transaction_id": 229,
+    "total": 36081,
+    "currency_code": "eur",
+    "created_at": "10/03/2025 14:48",
+    "state": "OK"
+  },
+  {
+    "transaction_id": 230,
+    "total": 36843,
+    "currency_code": "usd",
+    "created_at": "10/03/2025 15:00",
+    "state": "pending"
+  }
+]

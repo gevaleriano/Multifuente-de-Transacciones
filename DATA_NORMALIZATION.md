@@ -12,7 +12,7 @@
 }
 ```
 
-## 2. Reglas de Mapeo por Fuente
-- **Fuente Alpha (`id`, `amount`, `currency`, `timestamp`, `status`)**: Mapeo directo; conversión de fecha `YYYY-MM-DD HH:MM:SS` a ISO-8601.
-- **Fuente Beta (`transaction_id`, `total`, `currency_code`, `created_at`, `state`)**: Mapeo de `transaction_id` a `tx_<id>`; división de `total` en centavos entre 100; conversión de fecha `DD/MM/YYYY HH:MM`.
-- **Fuente Gamma (`ref`, `amount`, `date`, `result`)**: Limpieza de cadenas con moneda integrada (`€99,99`); estandarización de estado.
+## 2. Reglas de Transformación por Archivo de Origen
+- **`origin_transactions_alpha.json` (`Fuente_Alpha`)**: Campos `id`, `amount`, `currency`, `timestamp` (`YYYY-MM-DD HH:MM:SS`), `status`.
+- **`origin_transactions_beta.json` (`Fuente_Beta`)**: Campos `transaction_id` (prefijado con `tx_`), `total` (centavos divididos entre 100), `currency_code`, `created_at` (`DD/MM/YYYY HH:MM`), `state`.
+- **`origin_transactions_gamma.json` (`Fuente_Gamma`)**: Campos `ref`, `amount` (limpieza de símbolos `€`/`$` y coma decimal), `date` (ISO-8601), `result`.

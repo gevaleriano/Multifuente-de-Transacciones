@@ -1,4 +1,3 @@
-import re
 from datetime import datetime
 from typing import Dict, Any, Tuple
 
@@ -28,7 +27,7 @@ def clean_amount(raw_amount: Any, source_hint: str = "") -> Tuple[float, str]:
     val_str = val_str.replace(",", ".").strip()
     amount_float = float(val_str)
     
-    if source_hint.lower() == "source_2" or (isinstance(raw_amount, int) and amount_float > 1000):
+    if source_hint == "Fuente_Beta" or (isinstance(raw_amount, int) and amount_float > 1000):
         amount_float = amount_float / 100.0
         
     return round(amount_float, 2), detected_currency
@@ -63,13 +62,16 @@ def normalize_status(raw_status: Any) -> str:
     return STATUS_MAP.get(status_str, "PENDING")
 
 def detect_source_and_extract(raw_tx: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(raw_tx, dict):
+        raise ValueError("Record is not a valid object")
+
     if "id" in raw_tx and "amount" in raw_tx and "timestamp" in raw_tx:
         raw_id = str(raw_tx.get("id"))
         raw_amount = raw_tx.get("amount")
         currency = str(raw_tx.get("currency", "USD")).upper()
         timestamp = raw_tx.get("timestamp")
         status = raw_tx.get("status")
-        source = "Fuente_Alpha"
+        source = raw_tx.get("source", "Fuente_Alpha")
     elif "transaction_id" in raw_tx:
         raw_id = f"tx_{raw_tx.get('transaction_id')}"
         raw_amount = raw_tx.get("total")
@@ -85,12 +87,7 @@ def detect_source_and_extract(raw_tx: Dict[str, Any]) -> Dict[str, Any]:
         status = raw_tx.get("result")
         source = "Fuente_Gamma"
     else:
-        raw_id = str(raw_tx.get("id", raw_tx.get("ref", "unknown")))
-        raw_amount = raw_tx.get("amount", raw_tx.get("total"))
-        currency = str(raw_tx.get("currency", raw_tx.get("currency_code", ""))).upper()
-        timestamp = raw_tx.get("timestamp", raw_tx.get("created_at", raw_tx.get("date")))
-        status = raw_tx.get("status", raw_tx.get("state", raw_tx.get("result")))
-        source = "Fuente_Desconocida"
+        raise ValueError("Unrecognized transaction schema")
 
     return {
         "raw_id": raw_id,

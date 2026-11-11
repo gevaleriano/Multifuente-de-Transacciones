@@ -8,14 +8,47 @@
 </head>
 <body class="h-full flex flex-col font-sans">
     <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 shadow-lg">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
             <h1 class="text-xl font-bold text-sky-400 flex items-center gap-2">
                 <span>⚡</span> Sistema Multifuente de Transacciones
             </h1>
-            <span class="text-xs font-semibold px-2.5 py-1 bg-sky-950 text-sky-300 border border-sky-800 rounded-full">Procesamiento en Tiempo Real</span>
+            <div class="flex flex-wrap items-center gap-3">
+                <a href="{{ url_for('views.export_template') }}" class="bg-slate-700 hover:bg-slate-600 text-sky-300 border border-slate-600 text-xs font-bold px-3.5 py-2 rounded-lg transition flex items-center gap-1.5">
+                    <span>↓</span> Exportar Plantilla
+                </a>
+                <form action="{{ url_for('views.import_transactions') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 bg-slate-900/70 p-1.5 rounded-lg border border-slate-700">
+                    <input type="file" name="file" accept=".json" required class="text-xs text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-sky-600 file:text-white hover:file:bg-sky-500 cursor-pointer">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded transition">
+                        Importar JSON
+                    </button>
+                </form>
+            </div>
         </div>
     </header>
     <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              {% if category == 'error' %}
+              <div class="bg-rose-950/90 border border-rose-700 text-rose-200 px-4 py-3 rounded-xl flex flex-wrap items-center justify-between gap-3 shadow-md">
+                  <div class="flex items-center gap-2 text-sm font-medium">
+                      <span class="text-rose-400 font-bold text-base">⚠</span>
+                      <span>{{ message }}</span>
+                  </div>
+                  <a href="{{ url_for('views.export_template') }}" class="bg-rose-800 hover:bg-rose-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                      Descargar plantilla de carga
+                  </a>
+              </div>
+              {% else %}
+              <div class="bg-emerald-950/90 border border-emerald-700 text-emerald-200 px-4 py-3 rounded-xl flex items-center gap-2 text-sm font-medium shadow-md">
+                  <span class="text-emerald-400 font-bold text-base">✓</span>
+                  <span>{{ message }}</span>
+              </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
         {% block content %}{% endblock %}
     </main>
 </body>
