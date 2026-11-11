@@ -1,0 +1,11 @@
+{
+  "status_mapping": {
+    "completed": "SUCCESS",
+    "ok": "SUCCESS",
+    "success": "SUCCESS",
+    "failed": "FAILED",
+    "error": "FAILED"
+  },
+  "default_currency": "USD",
+  "supported_currencies": ["USD", "EUR"]
+}

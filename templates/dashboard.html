@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-sm">
+        <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Total Procesadas</p>
+        <p class="text-3xl font-extrabold text-white mt-1">{{ metrics.total_processed }}</p>
+    </div>
+    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-sm">
+        <p class="text-xs uppercase tracking-wider text-emerald-400 font-semibold">Válidas vs Inválidas</p>
+        <p class="text-3xl font-extrabold text-white mt-1">
+            <span class="text-emerald-400">{{ metrics.valid_count }}</span> / <span class="text-rose-400">{{ metrics.invalid_count }}</span>
+        </p>
+    </div>
+    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-sm">
+        <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Conteo por Estado</p>
+        <div class="flex gap-2 text-xs mt-2 font-bold">
+            <span class="bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-1 rounded">OK: {{ metrics.status_counts.SUCCESS }}</span>
+            <span class="bg-rose-950 text-rose-300 border border-rose-800 px-2 py-1 rounded">FAIL: {{ metrics.status_counts.FAILED }}</span>
+            <span class="bg-amber-950 text-amber-300 border border-amber-800 px-2 py-1 rounded">PEND: {{ metrics.status_counts.PENDING }}</span>
+        </div>
+    </div>
+    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-sm">
+        <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Totales por Moneda</p>
+        <div class="text-sm font-bold text-sky-300 mt-1">
+            {% for curr, total in metrics.totals_by_currency.items() %}
+                <span>{{ curr }}: ${{ "%.2f"|format(total) }}</span>{% if not loop.last %} | {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<form method="GET" action="/" class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-wrap gap-4 items-end">
+    <div>
+        <label class="block text-xs font-medium text-slate-400 mb-1">Estado</label>
+        <select name="status" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2">
+            <option value="">Todos los Estados</option>
+            <option value="SUCCESS" {% if selected_status == 'SUCCESS' %}selected{% endif %}>SUCCESS</option>
+            <option value="FAILED" {% if selected_status == 'FAILED' %}selected{% endif %}>FAILED</option>
+            <option value="PENDING" {% if selected_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+        </select>
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-slate-400 mb-1">Moneda</label>
+        <select name="currency" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2">
+            <option value="">Todas las Monedas</option>
+            {% for c in currencies %}
+            <option value="{{ c }}" {% if selected_currency == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-slate-400 mb-1">Fuente</label>
+        <select name="source" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2">
+            <option value="">Todas las Fuentes</option>
+            {% for s in sources %}
+            <option value="{{ s }}" {% if selected_source == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-slate-400 mb-1">Validez</label>
+        <select name="validity" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2">
+            <option value="">Todos</option>
+            <option value="valid" {% if selected_validity == 'valid' %}selected{% endif %}>Válidas</option>
+            <option value="invalid" {% if selected_validity == 'invalid' %}selected{% endif %}>Inválidas</option>
+        </select>
+    </div>
+    <div class="flex gap-2">
+        <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition">Filtrar</button>
+        <a href="/" class="bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs font-bold px-4 py-2 rounded-lg transition">Limpiar</a>
+    </div>
+</form>
+
+<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-900/50 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-700">
+                <tr>
+                    <th class="p-3">ID Normalizado</th>
+                    <th class="p-3">Monto</th>
+                    <th class="p-3">Moneda</th>
+                    <th class="p-3">Fecha (ISO-8601)</th>
+                    <th class="p-3">Estado</th>
+                    <th class="p-3">Fuente</th>
+                    <th class="p-3">Validez</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700/50">
+                {% for tx in transactions %}
+                <tr class="hover:bg-slate-700/30 transition">
+                    <td class="p-3 font-mono font-medium text-sky-300">{{ tx.id }}</td>
+                    <td class="p-3 font-mono">${{ "%.2f"|format(tx.amount) }}</td>
+                    <td class="p-3 font-semibold">{{ tx.currency }}</td>
+                    <td class="p-3 font-mono text-slate-400">{{ tx.timestamp }}</td>
+                    <td class="p-3">
+                        {% if tx.status == 'SUCCESS' %}
+                        <span class="bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded font-bold">SUCCESS</span>
+                        {% elif tx.status == 'FAILED' %}
+                        <span class="bg-rose-950 text-rose-300 border border-rose-800 px-2 py-0.5 rounded font-bold">FAILED</span>
+                        {% else %}
+                        <span class="bg-amber-950 text-amber-300 border border-amber-800 px-2 py-0.5 rounded font-bold">PENDING</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-3 text-slate-400">{{ tx.source }}</td>
+                    <td class="p-3">
+                        {% if tx.is_valid %}
+                        <span class="text-emerald-400 font-bold">✓ Válida</span>
+                        {% else %}
+                        <span class="text-rose-400 font-bold" title="{{ tx.error_reason }}">✕ Inválida</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="p-6 text-center text-slate-500">No se encontraron transacciones que coincidan con los filtros.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
